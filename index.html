@@ -14,9 +14,10 @@
     <textarea id="cout" rows="10" cols="100" readonly></textarea>
     <br><br>
     <input type="button" value="Run Code" onclick="vm.run(document.getElementById('code-input').value);document.getElementById('code-input').value='';">
+    <input type="button" value="Reset Virtual Machine" onclick="vm=new VirtualMachine();">
     <br>
     <p style="font-family: Arial, Helvetica, sans-serif;">Memory: <textarea id="memory-display" cols="128" style="font-family:Arial, Helvetica, sans-serif; font-size: smaller; height: 12px;" readonly></textarea></p>
-    <input type="button" value="Reset Virtual Machine" onclick="vm=new VirtualMachine();">
+    <a style="font-family:Arial, Helvetica, sans-serif;">Example programs: </a>
     <input type="button" value="Hello, World!", onclick="document.getElementById('code-input').value='++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.';">
     <input type="button" value="Sierpinski Triangle" onclick="document.getElementById('code-input').value='++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[-<<<[->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<<]>.>+[>>]>+]';">
     <br>
