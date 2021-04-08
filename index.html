@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input id="code-input" type="text" placeholder="Enter code">
+    <br>
+    <textarea id="cout" readonly></textarea>
+    <br>
+    <input type="button" value="Run Code" onclick="vm.run(document.getElementById('code-input').value);">
+    <br>
+    <p>Memory: <textarea id="memory-display" cols="128" style="font-family:Arial, Helvetica, sans-serif; font-size: smaller; height: 12px;" readonly></textarea></p>
+    <input type="button" value="Reset Virtual Machine" onclick="vm=new VirtualMachine();">
+
+    <script>
+        class VirtualMachine {
+            constructor() {
+                this.memory = new Array(128).fill(0);
+                this.ip = 0;
+                this.cout = "";
+                this.update();
+            }
+            
+            current() {
+                return this.memory[this.ip];
+            }
+
+            increment() {
+                this.memory[this.ip]++;
+            }
+
+            decrement() {
+                this.memory[this.ip]--;
+            }
+
+            advance() {
+                this.ip++;
+            }
+
+            recede() {
+                if (this.ip == 0) throw this.ip;
+                this.ip--;
+            }
+
+            update() {
+                document.querySelector("#memory-display").innerHTML = this.memory.toString();
+                document.querySelector("#cout").innerHTML = this.cout;
+            }
+
+            run(src) {
+                let i = 0;
+                while (i < src.length) {
+                    switch (src[i]) {
+                        case '+':
+                            this.increment();
+                            break;
+                        case '-':
+                            this.decrement();
+                            break;
+                        case '>':
+                            this.advance();
+                            break;
+                        case '<':
+                            this.recede();
+                            break;
+                        case '.':
+                            this.cout = this.cout.concat(String.fromCharCode(this.current()));
+                            break;
+                        case ',':
+                            this.memory[this.ip] = readline().charCodeAt(0);
+                            break;
+                        case ']': {
+                            if (this.current() != 0) {
+                                let nests = 0;
+                                while (true) {
+                                    i -= 1;
+                                    if (src[i] == ']') {
+                                        nests++;
+                                    } else if (src[i] == '[') {
+                                        if (nests == 0) {
+                                            break;
+                                        }
+                                        nests--;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        case '[': {
+                            if (this.current() == 0) {
+                                let nests = 0;
+                                while (true) {
+                                    i++;
+                                    if (i == src.length) {
+                                        console.log("error: unclosed bracket");
+                                        return;
+                                    }
+                                    if (src[i] == '[') {
+                                        nests++;
+                                    } else if (src[i] == ']') {
+                                        if (nests == 0) {
+                                            break;
+                                        }
+                                        nests--;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        case ' ': break;
+                        default:
+                            console.log("error: invalid character");
+                            return;
+                    }
+                    i++;
+                }
+                this.update();
+            }
+        }
+        let vm = new VirtualMachine();
+    </script>
+</body>
+</html>
