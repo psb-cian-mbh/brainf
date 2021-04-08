@@ -17,6 +17,7 @@
     <input type="button" value="Reset Virtual Machine" onclick="vm=new VirtualMachine();">
     <br>
     <p style="font-family: Arial, Helvetica, sans-serif;">Memory: <textarea id="memory-display" cols="128" style="font-family:Arial, Helvetica, sans-serif; font-size: smaller; height: 12px;" readonly></textarea></p>
+    <p style="font-family: Arial, Helvetica, sans-serif;">Node Pointer: <a id="np-display" style="font-family: 'Courier New', Courier, monospace;"></a></p>
     <a style="font-family:Arial, Helvetica, sans-serif;">Example programs: </a>
     <input type="button" value="Hello, World!", onclick="document.getElementById('code-input').value='++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.';">
     <input type="button" value="Sierpinski Triangle" onclick="document.getElementById('code-input').value='++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[-<<<[->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<<]>.>+[>>]>+]';">
@@ -25,9 +26,17 @@
     <p style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">The virtual machine creates a memory array and a node pointer (np) to the first element. When the interpreter finds a '+', it increments the item at the np, and does the opposite for '-'. When it finds '>', it advances the np, and does the opposite for '<'. '[' and ']' are used for simple control flow. '.' prints the ascii value of the item at np, and ',' gets user input (not working atm). </p>
 
     <script>
+        const MEMORY_SIZE = 256;
         class VirtualMachine {
             constructor() {
-                this.memory = new Array(256).fill(0);
+                this.memory = new Array(MEMORY_SIZE).fill(0);
+                this.np = 0;
+                this.cout = "";
+                this.update();
+            }
+
+            reset() {
+                this.memory = new Array(MEMORY_SIZE).fill(0);
                 this.np = 0;
                 this.cout = "";
                 this.update();
@@ -47,16 +56,28 @@
 
             advance() {
                 this.np++;
+                if (this.np >= MEMORY_SIZE) {
+                    this.reset();
+                    this.cout = "error: memory overflow";
+                    this.update();
+                    this.cout = "";
+                }
             }
 
             recede() {
-                if (this.np == 0) throw this.np;
-                this.np--;
+                if (this.np <= 0) {
+                    console.log("underflow");
+                    this.reset();
+                    this.cout = "error: memory underflow";
+                    this.update();
+                    this.cout = "";
+                } else this.np--;
             }
 
             update() {
                 document.querySelector("#memory-display").innerHTML = this.memory.toString();
                 document.querySelector("#cout").innerHTML = this.cout;
+                document.querySelector("#np-display").innerHTML = this.np.toString();
             }
 
             run(src) {
