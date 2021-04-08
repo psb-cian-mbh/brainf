@@ -7,14 +7,15 @@
     <title>Document</title>
 </head>
 <body>
-    <input id="code-input" type="text" placeholder="Enter code">
+    <input id="code-input" type="text" placeholder="Enter code" size="100">
     <br>
-    <textarea id="cout" readonly></textarea>
+    <textarea id="cout" cols="100" readonly></textarea>
     <br>
     <input type="button" value="Run Code" onclick="vm.run(document.getElementById('code-input').value);">
     <br>
     <p>Memory: <textarea id="memory-display" cols="128" style="font-family:Arial, Helvetica, sans-serif; font-size: smaller; height: 12px;" readonly></textarea></p>
     <input type="button" value="Reset Virtual Machine" onclick="vm=new VirtualMachine();">
+    <input type="button" value="Hello, World!", onclick="document.getElementById('code-input').value='++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.';">
 
     <script>
         class VirtualMachine {
@@ -113,7 +114,9 @@
                         }
                         case ' ': break;
                         default:
-                            console.log("error: invalid character");
+                            this.cout = "error: invalid character '" + src[i] + "'";
+                            this.update();
+                            this.cout = "";
                             return;
                     }
                     i++;
